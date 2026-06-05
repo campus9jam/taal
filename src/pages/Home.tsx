@@ -1,115 +1,132 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Music, Radio, Mic2, BookOpen, Wifi, Video, ChevronRight, Palette } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Mic2, Radio, BookOpen, Heart, Activity, Sparkles, Bell } from 'lucide-react';
 import TaalWheel from '../components/TaalWheel';
-import DiscoveryEngine from '../components/DiscoveryEngine';
-import { usePlayer, MOCK_TRACKS, MOCK_RADIO } from '../context/PlayerContext';
-import { useTheme } from '../context/ThemeContext';
+import { Link } from 'react-router-dom';
 
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+/* ─── Helpers ─── */
+function cn(...classes: (string | undefined | false | null)[]) {
+  return classes.filter(Boolean).join(' ');
+}
 
-const QUICK_LINKS = [
-  { icon: Music, label: 'Music', color: '#7C3AED', route: '/music' },
-  { icon: Radio, label: 'Radio', color: '#06B6D4', route: '/radio' },
-  { icon: Mic2, label: 'Podcasts', color: '#a855f7', route: '/podcast' },
-  { icon: BookOpen, label: 'Stories', color: '#f97316', route: '/stories' },
-  { icon: Wifi, label: 'Mesh', color: '#22c55e', route: '/mesh' },
-  { icon: Video, label: 'Concerts', color: '#ec4899', route: '/concerts' },
+/* ─── Sub-components ─── */
+const EcosystemCard = ({ label, description, count, color }: {
+  label: string; description: string; count: string; color: 'primary' | 'green';
+}) => (
+  <motion.div
+    whileTap={{ scale: 0.98 }}
+    className="p-5 rounded-3xl glass-morphism flex flex-col gap-4 group cursor-pointer relative overflow-hidden"
+  >
+    <div className={cn(
+      "absolute -right-4 -bottom-4 w-20 h-20 rounded-full blur-3xl opacity-20 transition-opacity group-hover:opacity-40",
+      color === 'primary' ? 'bg-primary' : 'bg-green-500'
+    )} />
+    <div className="flex flex-col">
+      <h4 className="text-base font-bold tracking-tight">{label}</h4>
+      <p className="text-xs text-white/40 font-medium mb-4">{description}</p>
+      <div className={cn(
+        "text-[9px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-full w-fit bg-white/5",
+        color === 'primary' ? 'text-primary' : 'text-green-500'
+      )}>
+        {count}
+      </div>
+    </div>
+  </motion.div>
+);
+
+const ActivityItem = ({ title, meta, icon: Icon, type }: {
+  title: string; meta: string; icon: React.ElementType; type: string;
+}) => (
+  <motion.div
+    whileTap={{ scale: 0.98 }}
+    className="flex items-center gap-4 p-4 rounded-2xl glass-morphism hover:bg-white/5 transition-all group cursor-pointer"
+  >
+    <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/40 group-hover:text-primary transition-colors">
+      <Icon size={24} strokeWidth={1.5} />
+    </div>
+    <div className="flex-1 min-w-0">
+      <h4 className="text-sm font-bold truncate tracking-tight">{title}</h4>
+      <p className="text-xs text-white/30 truncate">{meta}</p>
+    </div>
+    <div className="text-[9px] font-black text-white/10 uppercase tracking-widest group-hover:text-primary/40 transition-colors">
+      {type}
+    </div>
+  </motion.div>
+);
+
+const recentActivity = [
+  { title: "Midnight City",    meta: "M83 • Resonance Ambient",       icon: Heart,    type: "Resonated" },
+  { title: "The Simulation",   meta: "Ep 45 • Quantum Deep",           icon: Mic2,     type: "Podcast"   },
+  { title: "Neon Horizon FM",  meta: "Broadcasting Now",               icon: Radio,    type: "Radio"     },
+  { title: "The Last City",    meta: "Chapter 3: The Descent",         icon: BookOpen, type: "Story"     },
 ];
 
-export default function Home() {
-  const navigate = useNavigate();
-  const { play } = usePlayer();
-  const { themes, theme } = useTheme();
-  const currentTheme = themes.find(t => t.id === theme) ?? themes[0];
-
+/* ─── Home ─── */
+const Home = () => {
   return (
-    <motion.div
-      variants={container} initial="hidden" animate="show"
-      className="flex flex-col gap-8 p-5 pb-safe"
-    >
-      {/* Taal Wheel Hero */}
-      <motion.section variants={item} className="flex flex-col items-center gap-8 pt-4 pb-6">
-        <TaalWheel size={300} />
-      </motion.section>
+    <div className="flex flex-col gap-10 pb-40 px-5 pt-5">
 
-      {/* Quick links */}
-      <motion.section variants={item}>
-        <div className="grid grid-cols-3 gap-3">
-          {QUICK_LINKS.map(({ icon: Icon, label, color, route }) => (
-            <motion.button
-              key={label}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate(route)}
-              className="glass rounded-2xl p-4 flex flex-col items-start gap-2"
-            >
-              <div className="p-2 rounded-xl" style={{ background: color + '20' }}>
-                <Icon size={18} style={{ color }} />
-              </div>
-              <span className="text-sm font-bold">{label}</span>
-            </motion.button>
-          ))}
+      {/* Header Context */}
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-black tracking-tighter">Your Universe</h1>
+          <p className="text-white/40 text-sm font-medium tracking-tight">C9 TAAL • Resonance Active</p>
         </div>
-      </motion.section>
+        <div className="flex gap-2">
+          <Link
+            to="/upload"
+            className="w-10 h-10 rounded-full glass-morphism flex items-center justify-center hover:bg-white/10 transition-colors relative"
+          >
+            <Bell size={20} className="text-white/40" />
+            <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-primary rounded-full" />
+          </Link>
+          <Link
+            to="/search"
+            className="w-10 h-10 rounded-full glass-morphism flex items-center justify-center hover:bg-white/10 transition-colors"
+          >
+            <Activity size={20} className="text-primary" />
+          </Link>
+        </div>
+      </header>
 
-      {/* Trending */}
-      <motion.section variants={item}>
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-black tracking-widest text-white/50 uppercase">Trending Now</span>
-          <button onClick={() => navigate('/search')} className="flex items-center gap-1 text-[10px] primary-text font-bold">
-            See All <ChevronRight size={10} />
+      {/* The Central Hub (The Wheel) */}
+      <section className="flex items-center justify-center overflow-hidden -mx-5">
+        {/* Scale the 720px wheel down to fit the mobile viewport */}
+        <div
+          className="origin-center"
+          style={{ transform: 'scale(0.46)', width: 720, height: 720, marginTop: -195, marginBottom: -195 }}
+        >
+          <TaalWheel />
+        </div>
+      </section>
+
+      {/* Ecosystem Pulse Grid */}
+      <section className="flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Ecosystem Pulse</h3>
+          <button className="flex items-center gap-1 text-[10px] text-primary font-bold tracking-widest hover:translate-x-1 transition-transform">
+            <span>EXPLORE DEEP</span>
+            <Sparkles size={10} />
           </button>
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
-          {[...MOCK_TRACKS, ...MOCK_RADIO.slice(0, 2)].map(track => (
-            <motion.button
-              key={track.id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => play(track as any, MOCK_TRACKS)}
-              className="flex-shrink-0 w-36 glass rounded-2xl overflow-hidden text-left"
-            >
-              <div className="relative h-24">
-                <img src={track.artwork} alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-2 left-2 text-[9px] font-black tracking-widest uppercase opacity-60">
-                  {track.type}
-                </div>
-              </div>
-              <div className="p-3">
-                <p className="text-xs font-semibold truncate">{track.title}</p>
-                <p className="text-[10px] text-white/40 truncate">{track.artist}</p>
-              </div>
-            </motion.button>
+        <div className="grid grid-cols-2 gap-4">
+          <EcosystemCard label="Ambient AI"    description="Emotional Visualizer" count="Synced"    color="primary" />
+          <EcosystemCard label="Mesh Network" description="Nearby Hubs"          count="4 Active"  color="green"   />
+        </div>
+      </section>
+
+      {/* Resonance Feed */}
+      <section className="flex flex-col gap-5">
+        <h3 className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Resonance Feed</h3>
+        <div className="space-y-3">
+          {recentActivity.map((activity, i) => (
+            <ActivityItem key={i} {...activity} />
           ))}
         </div>
-      </motion.section>
+      </section>
 
-      {/* Styles Gallery CTA */}
-      <motion.section variants={item}>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => navigate('/styles')}
-          className="w-full rounded-2xl p-4 flex items-center gap-4 overflow-hidden relative"
-          style={{ background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.accent})` }}
-        >
-          <div className="absolute right-0 top-0 w-32 h-32 rounded-full bg-white/10 -translate-y-8 translate-x-8" />
-          <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
-            <Palette size={20} className="text-white" />
-          </div>
-          <div className="flex-1 text-left relative">
-            <p className="text-sm font-black text-white">Styles Gallery</p>
-            <p className="text-xs text-white/70">12 themes · customize your look</p>
-          </div>
-          <ChevronRight size={18} className="text-white/70 relative" />
-        </motion.button>
-      </motion.section>
-
-      {/* Discovery Engine */}
-      <motion.section variants={item}>
-        <DiscoveryEngine />
-      </motion.section>
-    </motion.div>
+    </div>
   );
-}
+};
+
+export default Home;

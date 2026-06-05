@@ -23,26 +23,30 @@ export default function App() {
     <ThemeProvider>
       <PlayerProvider>
         <BrowserRouter>
-          <div className="min-h-dvh flex flex-col relative" style={{ background: 'var(--bg)' }}>
+          <div
+            className="min-h-dvh flex flex-col relative"
+            style={{ background: 'var(--bg)' }}
+          >
             <AmbientOrb />
 
             <main className="flex-1 overflow-y-auto relative z-10">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/music" element={<Music />} />
-                <Route path="/radio" element={<Radio />} />
-                <Route path="/podcast" element={<Podcast />} />
-                <Route path="/stories" element={<Stories />} />
-                <Route path="/mesh" element={<Mesh />} />
+                <Route path="/"         element={<Home />} />
+                <Route path="/music"    element={<Music />} />
+                <Route path="/radio"    element={<Radio />} />
+                <Route path="/podcast"  element={<Podcast />} />
+                <Route path="/stories"  element={<Stories />} />
+                <Route path="/mesh"     element={<Mesh />} />
                 <Route path="/concerts" element={<Concerts />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/upload" element={<Upload />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/styles" element={<StylesGallery />} />
+                <Route path="/search"   element={<Search />} />
+                <Route path="/library"  element={<Library />} />
+                <Route path="/upload"   element={<Upload />} />
+                <Route path="/profile"  element={<Profile />} />
+                <Route path="/styles"   element={<StylesGallery />} />
               </Routes>
             </main>
 
+            {/* Mini player sits above bottom nav */}
             <MiniPlayer />
             <BottomNav />
           </div>
