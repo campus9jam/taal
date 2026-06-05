@@ -1,35 +1,25 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { '@': path.resolve(__dirname, './src') }
-  },
-  // Treat audio files as static assets (importable as URL strings)
-  assetsInclude: ['**/*.mp3', '**/*.m4a', '**/*.ogg', '**/*.wav', '**/*.flac', '**/*.aac'],
+  plugins: [react()],
   build: {
-    // Raise the inline limit so small assets aren't base64-inlined (keep audio as files)
-    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        // Put audio files in a dedicated folder inside dist/assets/audio/
-        assetFileNames: (assetInfo) => {
-          const name = assetInfo.name ?? '';
-          if (/\.(mp3|m4a|ogg|wav|flac|aac)$/.test(name)) {
-            return 'assets/audio/[name]-[hash][extname]';
+        manualChunks(id: string) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
           }
-          return 'assets/[name]-[hash][extname]';
+          if (id.includes('node_modules/framer-motion')) return 'motion';
+          if (id.includes('node_modules/react-router')) return 'router';
+          if (id.includes('node_modules/lucide-react')) return 'icons';
         },
       },
     },
   },
   server: {
-    // Needed for audio streaming during local dev
-    headers: {
-      'Accept-Ranges': 'bytes',
-    }
-  }
-})
+    port: 5173,
+    host: true,
+  },
+});
