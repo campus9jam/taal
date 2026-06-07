@@ -1,0 +1,9 @@
+/// <reference types="vite/client" />
+
+// Allow importing audio files as URL strings
+declare module '*.mp3' { const src: string; export default src; }
+declare module '*.m4a' { const src: string; export default src; }
+declare module '*.ogg' { const src: string; export default src; }
+declare module '*.wav' { const src: string; export default src; }
+declare module '*.flac' { const src: string; export default src; }
+declare module '*.aac' { const src: string; export default src; }
